@@ -1,7 +1,6 @@
 """
 Sample script to test ad-hoc scanning by table drive.
 This accepts a number with optional decimal part [0-9]+(\.[0-9]+)?
-
 NOTE: suitable for optional matches
 """
 
@@ -12,10 +11,6 @@ def getchar(text,pos):
 	if pos<0 or pos>=len(text): return None
 	
 	c = text[pos]
-	
-	# **Σημείο #3**: Προαιρετικά, προσθέστε τις δικές σας ομαδοποιήσεις
-	
-	if c>='0' and c<='9': return 'DIGIT'	# 0..9 grouped together
 	
 	if c=='.': return 'DOT'	# dot as a category by itself
 	
@@ -60,15 +55,22 @@ def scan(text,transitions,accepts):
 			
 	
 # **Σημείο #1**: Αντικαταστήστε με το δικό σας λεξικό μεταβάσεων
-transitions = { 's0': { 'DIGIT':'s1' },
-       			's1': { 'DIGIT':'s1','DOT':'s2' },
-       			's2': { 'DIGIT':'s3' },
-       			's3': { 'DIGIT':'s3' }       
-     		  } 
-
+transitions = { 's0': { '0':'s1','1':'s1','2':'s1','3':'s2' },
+       		's1': { '0':'s3','1':'s3','2':'s3','3':'s3','4':'s3','5':'s3','6':'s3','7':'s3','8':'s3','9':'s3' },
+       		's2': { '0':'s3','1':'s3','2':'s3','3':'s3','4':'s3','5':'s3' },
+       		's3': { '0':'s4' },
+		's4': { '0':'s5','1':'s5','2':'s5','3':'s5','4':'s5','5':'s5','6':'s5','7':'s5','8':'s5','9':'s5' },
+		's5': { '0':'s6','1':'s6','2':'s6','3':'s6','4':'s6','5':'s6','6':'s6','7':'s6','8':'s6','9':'s6' },
+		's6': { 'K':'s7','M':'s8','G':'s10' },
+		's7': { 'T':'s13' },
+		's8': { 'P':'s9' },
+		's9': { 'S':'s13' },
+		's10': { '0':'s11','1':'s11','2':'s11','3':'s11','4':'s11','5':'s11','6':'s11','7':'s11','8':'s11','9':'s11' },
+		's11': { '0':'s12','1':'s12','2':'s12','3':'s12','4':'s12','5':'s12','6':'s12','7':'s12','8':'s12','9':'s12' },
+		's12': { 'K':'s7','M':'s8' }
+		}
 # **Σημείο #2**: Αντικαταστήστε με το δικό σας λεξικό καταστάσεων αποδοχής
-accepts = { 's1':'INT_TOKEN',
-       		's3':'FLOAT_TOKEN'	
+accepts = { 's13':'WIND_TOKEN',
      	  }
 
 
@@ -84,5 +86,4 @@ while text:		# i.e. len(text)>0
 		break
 	print("token:",token,"text:",text[:pos])
 	# new text for next scan
-	text = text[pos:]
-	
+text = text[pos:]
